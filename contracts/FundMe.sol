@@ -6,6 +6,7 @@ import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
 
 contract FundMe {
+    /* VARIABLES AND MAPPINGS ARE DECLARED HERE */
     using SafeMathChainlink for uint256;
 
     mapping(address => uint256) public addressToAmountFunded;
@@ -13,11 +14,13 @@ contract FundMe {
     address public owner;
     AggregatorV3Interface public priceFeed;
 
+    /* CONSTRUCTORS ARE DECLARED HERE */
     constructor(address _priceFeed) public {
         priceFeed = AggregatorV3Interface(_priceFeed);
         owner = msg.sender;
     }
 
+    /* FUNCTIONS */
     function fund() public payable {
         uint256 minimumUSD = 50 * 10**18;
         require(
