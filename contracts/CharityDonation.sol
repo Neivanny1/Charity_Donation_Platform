@@ -16,7 +16,7 @@ contract CharityDonationPlatform {
     // Struct to hold donor details
     struct Donor {
         address donorAddress;
-        uint256 amount;
+        uint256 amountToDonate;
     }
     // variables
     uint256 public campaignCount;
@@ -25,8 +25,8 @@ contract CharityDonationPlatform {
 
     /* EVENTS ARE DECLARED HERE */
     event CampaignCreated(uint256 campaignId, string title, address indexed owner);
-    event DonationReceived(uint campaignId, address indexed donor, uint256 amount);
-    event FundsWithdrawn(uint campaignId, uint256 amount);
+    event DonationReceived(uint campaignId, address indexed donor, uint256 amountToDonate);
+    event FundsWithdrawn(uint campaignId, uint256 amountToWithdraw);
 
     /* CONSTRUCTORS AND MODIFIERS ARE DECLARED HERE */
     // modifier to check onwership
@@ -71,15 +71,22 @@ contract CharityDonationPlatform {
             campaign.raisedAmount += msg.value;
             donations[_campaignId].push(Donor({
                 donorAddress: msg.sender,
-                amount: msg.value
+                amountToDonate: msg.value
             }));
             emit DonationReceived(_campaignId, msg.sender, msg.value);
             if (campaign.raisedAmount >= campaign.targetAmount) {
                 campaign.isCompleted = true;
             }
         }
-
-
-    function withdrawFunds() public {}
+    
+    // Function to handles funds withdrawal from compaign
+    function withdrawFunds(uint _campaignId, uint256 _amountToWithdraw)
+    public campaignExists(_campaignId) onlyOnwer(_campaignId) {
+        Campaign storage campaign = campaigns[_campaignId];
+        require(_amountToWithdraw <= campaign.raisedAmount, "Insufficient funds");
+        campaign.raisedAmount -= _amountToWithdraw;
+        campaign.owner.transfer(_amountToWithdraw);
+        emit FundsWithdrawn(_campaignId, _amountToWithdraw);
+    }
 
 }
