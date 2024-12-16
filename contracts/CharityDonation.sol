@@ -79,7 +79,7 @@ contract CharityDonationPlatform {
             }
         }
     
-    // Function to handles funds send to compaign
+    // Function to handles funds withdrawal from compaign
     function withdrawFunds(uint _campaignId, uint256 _amountToWithdraw)
     public campaignExists(_campaignId) onlyOnwer(_campaignId) {
         Campaign storage campaign = campaigns[_campaignId];
