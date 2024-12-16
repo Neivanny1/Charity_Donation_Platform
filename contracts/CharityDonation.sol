@@ -60,7 +60,26 @@ contract CharityDonationPlatform {
         emit CampaignCreated(campaignCount, _title, msg.sender);
         campaignCount++;
     }
-    function donateToCampaign() public {}
+
+    // Function to handles funds send to compaign
+    function donateToCampaign(uint256 _campaignId)
+        public payable campaignExists(_campaignId) {
+            require(!campaigns[_campaignId].isCompleted, "Campaign is completed");
+            require(msg.value > 0, "Donation must be greater than 0");
+
+            Campaign storage campaign = campaigns[_campaignId];
+            campaign.raisedAmount += msg.value;
+            donations[_campaignId].push(Donor({
+                donorAddress: msg.sender,
+                amount: msg.value
+            }));
+            emit DonationReceived(_campaignId, msg.sender, msg.value);
+            if (campaign.raisedAmount >= campaign.targetAmount) {
+                campaign.isCompleted = true;
+            }
+        }
+
+
     function withdrawFunds() public {}
 
 }
