@@ -11,6 +11,7 @@ contract CharityDonationPlatform is Admin {
     mapping(uint => Utils.Campaign) public campaigns;
     mapping(uint => Utils.Donor[]) public donations;
 
+
     // Modifier to check if a campaign exists
     modifier campaignExists(uint campaignId) {
         require(campaignId < campaignCount, "Campaign does not exist");
