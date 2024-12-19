@@ -11,16 +11,19 @@ contract CharityDonationPlatform is Admin {
     mapping(uint => Utils.Campaign) public campaigns;
     mapping(uint => Utils.Donor[]) public donations;
 
+    // Modifier to check if a campaign exists
     modifier campaignExists(uint campaignId) {
         require(campaignId < campaignCount, "Campaign does not exist");
         _;
     }
 
+    // Modifier to ensure only the campaign owner can perform certain actions
     modifier onlyCampaignOwner(uint campaignId) {
         require(msg.sender == campaigns[campaignId].owner, "Not the campaign owner");
         _;
     }
 
+    // Function to create a new campaign
     function createCampaign(
         string memory title,
         string memory description,
@@ -40,6 +43,7 @@ contract CharityDonationPlatform is Admin {
         campaignCount++;
     }
 
+    // Function to donate to an existing campaign
     function donateToCampaign(uint campaignId) public payable campaignExists(campaignId) {
         require(msg.value > 0, "Donation must be greater than 0");
         Utils.Campaign storage campaign = campaigns[campaignId];
@@ -59,6 +63,7 @@ contract CharityDonationPlatform is Admin {
         }
     }
 
+    // Function to withdraw funds from a campaign
     function withdrawFunds(uint campaignId, uint amount)
         public
         campaignExists(campaignId)
